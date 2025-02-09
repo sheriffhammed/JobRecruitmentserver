@@ -1,0 +1,27 @@
+const searchJob = async (model, filter, res) => {
+  try {
+    const job = await model
+      .find(filter)
+      .populate("jobType", "description -_id")
+      .populate("modeOfWork", "description -_id")
+      .populate("industry", "description -_id")
+      .populate("experience", "description -_id")
+      .populate("user", "firstName lastName")
+      .exec();
+
+    if (res.status(200) && job) {
+      res.status(200).json({ data: job });
+    } else {
+      return res
+        .status(400)
+        .json({ message: "No Record Found, Please try again" });
+    }
+  } catch (error) {
+    return res.status(500).json({
+      message: "No record Found, Something went wrong please try again",
+      error: error.message,
+    });
+  }
+};
+
+module.exports = { searchJob };
